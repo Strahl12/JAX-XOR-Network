@@ -11,6 +11,7 @@ def numpy_collate(batch):
     else:
         return np.array(batch)
 
+
 class XORDataset(data.Dataset):
 
     def __init__(self, size, seed, std=0.1):
@@ -50,7 +51,6 @@ class XORDataset(data.Dataset):
         return self.size
 
     def __getitem__(self, idx):
-
-        data_point = self.data(idx)
-        data_label = self.label(idx)
+        data_point = self.data[idx]
+        data_label = self.label[idx]
         return data_point, data_label

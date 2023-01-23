@@ -44,15 +44,18 @@ def train_model(state, data_loader, num_epochs=NUM_EPOCHS):
 
 if __name__ == "__main__":
     rng = jax.random.PRNGKey(42)
-    train_dataset = XORDataset(size=2500, seed=42)
-    train_data_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True, collate_fn=numpy_collate)
-    model = Classifier(num_hidden=8, num_outputs=1)
     rng, inp_rng, init_rng = jax.random.split(rng, 3)
-    zeros = jnp.zeros((8, 2))
+
+    train_dataset = XORDataset(size=2500, seed=42)
+    train_data_loader = data.DataLoader(train_dataset, batch_size=128,
+                                        shuffle=True, collate_fn=numpy_collate)
+
+    model = Classifier(num_hidden=8, num_outputs=1)
     inp = jax.random.normal(inp_rng, (8, 2))
-    params = model.init(init_rng, zeros)
+    params = model.init(init_rng, inp)
     optimiser = optax.sgd(learning_rate=LEARNING_RATE)
     model_state = train_state.TrainState.create(apply_fn=model.apply,
                                                 params=params,
                                                 tx=optimiser)
-    trained_model_state = train_model(model_state, train_data_loader, num_epochs=NUM_EPOCHS)
+    trained_model_state = train_model(model_state, train_data_loader,
+                                      num_epochs=NUM_EPOCHS)
